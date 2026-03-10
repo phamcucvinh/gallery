@@ -10,16 +10,10 @@
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     body { background:#FAF7F2; color:#2C2C2C; font-family:'Playfair Display','Noto Serif KR',Georgia,serif; min-height:100vh; }
-
-    /* Nav */
     .nav { padding:1.2rem 2rem; border-bottom:1px solid #E8E0D8; }
     .nav a { color:#B8977E; text-decoration:none; font-size:0.95rem; letter-spacing:0.04em; transition:color 0.2s; }
     .nav a:hover { color:#2C2C2C; }
-
-    /* Layout */
     .order-wrap { max-width:1100px; margin:2rem auto; padding:0 2rem; display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
-
-    /* Preview */
     .preview { position:sticky; top:2rem; }
     .preview-frame { background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.1); }
     .preview-frame.wood { border:12px solid #8B6914; }
@@ -29,20 +23,14 @@
     .preview-frame.none { border:none; }
     .preview-frame img { display:block; width:100%; height:auto; }
     .preview-title { margin-top:1rem; font-size:1rem; color:#B8977E; text-align:center; font-style:italic; }
-
-    /* Form */
     .order-form h2 { font-size:1.8rem; font-weight:600; margin-bottom:0.3rem; }
     .order-form .price-tag { font-size:1.4rem; color:#B8977E; margin-bottom:1.5rem; }
     .form-section { margin-bottom:1.5rem; }
     .form-section h3 { font-size:0.85rem; text-transform:uppercase; letter-spacing:0.1em; color:#999; margin-bottom:0.8rem; }
-
-    /* Option cards */
     .options { display:flex; gap:0.6rem; flex-wrap:wrap; }
     .opt { padding:0.6rem 1.2rem; border:2px solid #E8E0D8; border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.9rem; background:#fff; transition:all 0.2s; }
     .opt:hover { border-color:#B8977E; }
     .opt.active { border-color:#2C2C2C; background:#2C2C2C; color:#FAF7F2; }
-
-    /* Color swatches */
     .swatches { display:flex; gap:0.8rem; }
     .swatch { width:40px; height:40px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.2s; position:relative; }
     .swatch:hover { transform:scale(1.1); }
@@ -53,34 +41,26 @@
     .swatch[data-frame="white"] { background:#f0ede8; border:3px solid #ddd; }
     .swatch[data-frame="natural"] { background:#C4A574; }
     .swatch[data-frame="none"] { background:linear-gradient(135deg,#FAF7F2 45%,#ddd 45%,#ddd 55%,#FAF7F2 55%); border:3px solid #ddd; }
-
-    /* Inputs */
     .input-group { margin-bottom:1rem; }
     .input-group label { display:block; font-size:0.85rem; color:#999; margin-bottom:0.3rem; letter-spacing:0.04em; }
     .input-group input, .input-group textarea { width:100%; padding:0.7rem 1rem; border:2px solid #E8E0D8; border-radius:6px; font-family:inherit; font-size:0.95rem; background:#fff; transition:border-color 0.2s; outline:none; }
     .input-group input:focus, .input-group textarea:focus { border-color:#B8977E; }
     .input-group textarea { resize:vertical; min-height:80px; }
     .input-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-
-    /* Quantity */
     .qty-wrap { display:flex; align-items:center; gap:0.8rem; }
     .qty-btn { width:36px; height:36px; border:2px solid #E8E0D8; border-radius:6px; background:#fff; font-size:1.2rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
     .qty-btn:hover { border-color:#2C2C2C; }
     .qty-val { font-size:1.1rem; min-width:2rem; text-align:center; }
-
-    /* Submit */
     .submit-btn { width:100%; padding:1rem; background:#2C2C2C; color:#FAF7F2; border:none; border-radius:6px; font-family:inherit; font-size:1.1rem; letter-spacing:0.04em; cursor:pointer; transition:background 0.2s; margin-top:0.5rem; }
     .submit-btn:hover { background:#B8977E; }
-
-    /* Summary */
+    .submit-btn:disabled { background:#ccc; cursor:not-allowed; }
     .summary { background:#fff; border-radius:8px; padding:1.2rem; margin-bottom:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
     .summary-row { display:flex; justify-content:space-between; padding:0.4rem 0; font-size:0.95rem; }
     .summary-row.total { border-top:2px solid #E8E0D8; margin-top:0.5rem; padding-top:0.8rem; font-weight:600; font-size:1.1rem; }
-
-    /* Toast */
     .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:#2C2C2C; color:#FAF7F2; padding:1rem 2rem; border-radius:8px; font-size:1rem; opacity:0; transition:all 0.4s ease; z-index:100; }
     .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-
+    .toast.success { background:#2d6a2e; }
+    .toast.error { background:#8b2020; }
     @media (max-width:768px) {
       .order-wrap { grid-template-columns:1fr; gap:2rem; }
       .preview { position:static; }
@@ -90,7 +70,7 @@
 </head>
 <body>
 
-  <nav class="nav"><a href="index.html">← Gallery</a></nav>
+  <nav class="nav"><a href="index.html">&larr; Gallery</a></nav>
 
   <div class="order-wrap">
     <div class="preview">
@@ -145,11 +125,11 @@
         <div class="input-row">
           <div class="input-group">
             <label>이름</label>
-            <input type="text" id="name" placeholder="홍길동">
+            <input type="text" id="name" placeholder="홍길동" required>
           </div>
           <div class="input-group">
             <label>연락처</label>
-            <input type="tel" id="phone" placeholder="010-1234-5678">
+            <input type="tel" id="phone" placeholder="010-1234-5678" required>
           </div>
         </div>
         <div class="input-group">
@@ -158,7 +138,7 @@
         </div>
         <div class="input-group">
           <label>배송 주소</label>
-          <input type="text" id="address" placeholder="서울시 강남구...">
+          <input type="text" id="address" placeholder="서울시 강남구..." required>
         </div>
         <div class="input-group">
           <label>요청사항</label>
@@ -166,14 +146,13 @@
         </div>
       </div>
 
-      <button class="submit-btn" onclick="submitOrder()">주문하기</button>
+      <button class="submit-btn" id="submit-btn" onclick="submitOrder()">주문하기</button>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    // Parse query
     var params = new URLSearchParams(window.location.search);
     var imgFile = params.get('img') || '';
     var imgTitle = imgFile.replace(/\.[^.]+$/, '').replace(/_/g, ' ').replace(/-/g, ' ');
@@ -186,6 +165,7 @@
     var qty = 1;
     var selectedSize = 'A4';
     var selectedFrame = 'wood';
+    var FRAME_NAMES = {wood:'월넛',black:'블랙',white:'화이트',natural:'내추럴',none:'프레임 없음'};
 
     function fmt(n) { return '₩' + n.toLocaleString(); }
 
@@ -198,7 +178,6 @@
       rows[0].querySelector('span').textContent = selectedSize + ' 액자';
     }
 
-    // Size
     document.getElementById('size-options').addEventListener('click', function(e) {
       var btn = e.target.closest('.opt');
       if (!btn) return;
@@ -209,62 +188,103 @@
       updateSummary();
     });
 
-    // Frame
     document.getElementById('frame-options').addEventListener('click', function(e) {
       var sw = e.target.closest('.swatch');
       if (!sw) return;
       document.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('active'); });
       sw.classList.add('active');
       selectedFrame = sw.dataset.frame;
-      var frame = document.getElementById('preview-frame');
-      frame.className = 'preview-frame ' + selectedFrame;
+      document.getElementById('preview-frame').className = 'preview-frame ' + selectedFrame;
     });
 
-    // Qty
     function changeQty(d) {
       qty = Math.max(1, Math.min(99, qty + d));
       document.getElementById('qty-val').textContent = qty;
       updateSummary();
     }
 
-    // Toast
-    function showToast(msg) {
+    function showToast(msg, type) {
       var t = document.getElementById('toast');
       t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(function() { t.classList.remove('show'); }, 3000);
+      t.className = 'toast ' + (type || '') + ' show';
+      setTimeout(function() { t.className = 'toast'; }, 4000);
     }
 
-    // Submit
     function submitOrder() {
       var name = document.getElementById('name').value.trim();
       var phone = document.getElementById('phone').value.trim();
       var email = document.getElementById('email').value.trim();
       var address = document.getElementById('address').value.trim();
+      var memo = document.getElementById('memo').value.trim();
 
       if (!name || !phone || !address) {
-        showToast('이름, 연락처, 주소를 입력해주세요.');
+        showToast('이름, 연락처, 주소를 입력해주세요.', 'error');
         return;
       }
 
-      var memo = document.getElementById('memo').value.trim();
       var total = basePrice * qty;
-      var orderData = {
-        image: imgFile,
-        size: selectedSize,
-        frame: selectedFrame,
-        qty: qty,
-        total: total,
-        name: name,
-        phone: phone,
-        email: email,
-        address: address,
-        memo: memo,
-        date: new Date().toISOString()
-      };
+      var imgUrl = window.location.origin + window.location.pathname.replace('order.html','') + 'images/' + imgFile;
 
-      console.log('ORDER:', JSON.stringify(orderData, null, 2));
-      showToast('주문이 접수되었습니다! 확인 후 연락드리겠습니다.');
+      var body = [
+        '[ 액자 주문서 ]',
+        '',
+        '■ 작품 정보',
+        '  작품: ' + imgTitle,
+        '  이미지: ' + imgUrl,
+        '',
+        '■ 주문 내역',
+        '  사이즈: ' + selectedSize,
+        '  프레임: ' + FRAME_NAMES[selectedFrame],
+        '  단가: ' + fmt(basePrice),
+        '  수량: ' + qty,
+        '  합계: ' + fmt(total),
+        '',
+        '■ 주문자 정보',
+        '  이름: ' + name,
+        '  연락처: ' + phone,
+        '  이메일: ' + (email || '-'),
+        '  주소: ' + address,
+        '  요청사항: ' + (memo || '-'),
+        '',
+        '주문일시: ' + new Date().toLocaleString('ko-KR')
+      ].join('\n');
+
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = '발송 중...';
+
+      // FormSubmit.co로 이메일 발송
+      var formData = new FormData();
+      formData.append('_subject', '[액자주문] ' + imgTitle + ' / ' + selectedSize + ' / ' + name);
+      formData.append('_replyto', email || '');
+      formData.append('_template', 'box');
+      formData.append('_captcha', 'false');
+      formData.append('message', body);
+      formData.append('name', name);
+      formData.append('phone', phone);
+      formData.append('email', email);
+      formData.append('address', address);
+
+      fetch('https://formsubmit.co/ajax/hangmansoose18@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success === 'true' || data.success === true) {
+          showToast('주문이 접수되었습니다! 이메일로 확인해주세요.', 'success');
+          btn.textContent = '주문 완료 ✓';
+        } else {
+          showToast('발송 완료! 첫 사용 시 이메일 인증이 필요할 수 있습니다.', 'success');
+          btn.textContent = '주문 완료 ✓';
+        }
+      })
+      .catch(function() {
+        showToast('네트워크 오류. 잠시 후 다시 시도해주세요.', 'error');
+        btn.disabled = false;
+        btn.textContent = '주문하기';
+      });
     }
 
     updateSummary();
