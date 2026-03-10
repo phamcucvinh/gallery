@@ -3,7 +3,7 @@ build.py — Static site generator for an online art gallery.
 
 Scans images/ for supported image files, extracts display titles from
 filenames, and generates a Masonry-layout index.html with lazy-loaded
-images, responsive CSS columns, and progressive loading (50 at a time).
+images, responsive CSS columns, progressive loading, and fade-in animation.
 """
 
 import html
@@ -54,14 +54,24 @@ HTML_TEMPLATE = """\
     .gallery-header .count {{ margin-top:0.5rem; font-size:0.9rem; color:#B8977E; }}
     .divider {{ width:60px; height:2px; background:#B8977E; margin:1.5rem auto 0; }}
     .masonry {{ column-count:4; column-gap:1.5rem; padding:2rem 3rem; max-width:1400px; margin:0 auto; flex:1; }}
-    .masonry figure {{ break-inside:avoid; margin:0 0 1.5rem; background:#fff; border-radius:6px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08); transition:box-shadow 0.3s, transform 0.3s; }}
+    .masonry figure {{
+      break-inside:avoid; margin:0 0 1.5rem; background:#fff; border-radius:6px;
+      overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08);
+      transition:box-shadow 0.3s, transform 0.3s;
+      opacity:0; transform:translateY(20px);
+      animation:fadeInUp 0.6s ease forwards;
+    }}
     .masonry figure:hover {{ box-shadow:0 6px 24px rgba(0,0,0,0.14); transform:translateY(-3px); }}
-    .masonry figure img {{ display:block; width:100%; height:auto; }}
+    .masonry figure img {{ display:block; width:100%; height:auto; transition:transform 0.4s ease; }}
+    .masonry figure:hover img {{ transform:scale(1.03); }}
     .masonry figcaption {{ padding:0.75rem 1rem; font-size:0.95rem; text-align:center; letter-spacing:0.02em; }}
     .load-more-wrap {{ text-align:center; padding:2rem; }}
     .load-more-btn {{ font-family:inherit; font-size:1rem; padding:0.8rem 2.5rem; background:#2C2C2C; color:#FAF7F2; border:none; border-radius:4px; cursor:pointer; letter-spacing:0.04em; transition:background 0.2s; }}
     .load-more-btn:hover {{ background:#B8977E; }}
     .gallery-footer {{ text-align:center; padding:2rem; font-size:0.85rem; color:#B8977E; letter-spacing:0.04em; }}
+    @keyframes fadeInUp {{
+      to {{ opacity:1; transform:translateY(0); }}
+    }}
     @media (max-width:1200px) {{ .masonry {{ column-count:3; }} }}
     @media (max-width:1024px) {{ .masonry {{ column-count:2; padding:1.5rem 2rem; }} }}
     @media (max-width:600px) {{ .masonry {{ column-count:1; padding:1rem; }} .gallery-header h1 {{ font-size:2rem; }} }}
@@ -92,6 +102,7 @@ HTML_TEMPLATE = """\
       for(var i=loaded;i<end;i++){{
         var item=ALL_IMAGES[i];
         var fig=document.createElement('figure');
+        fig.style.animationDelay=((i-loaded)*0.04)+'s';
         var img=document.createElement('img');
         img.src='images/'+item[0];
         img.alt=item[1];
