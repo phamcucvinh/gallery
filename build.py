@@ -1,9 +1,5 @@
 """
 build.py — Static site generator for an online art gallery.
-
-Scans images/ for supported image files, extracts display titles from
-filenames, and generates a Masonry-layout index.html with lazy-loaded
-images, responsive CSS columns, progressive loading, and fade-in animation.
 """
 
 import html
@@ -60,6 +56,7 @@ HTML_TEMPLATE = """\
       transition:box-shadow 0.3s, transform 0.3s;
       opacity:0; transform:translateY(20px);
       animation:fadeInUp 0.6s ease forwards;
+      cursor:pointer;
     }}
     .masonry figure:hover {{ box-shadow:0 6px 24px rgba(0,0,0,0.14); transform:translateY(-3px); }}
     .masonry figure img {{ display:block; width:100%; height:auto; transition:transform 0.4s ease; }}
@@ -69,9 +66,7 @@ HTML_TEMPLATE = """\
     .load-more-btn {{ font-family:inherit; font-size:1rem; padding:0.8rem 2.5rem; background:#2C2C2C; color:#FAF7F2; border:none; border-radius:4px; cursor:pointer; letter-spacing:0.04em; transition:background 0.2s; }}
     .load-more-btn:hover {{ background:#B8977E; }}
     .gallery-footer {{ text-align:center; padding:2rem; font-size:0.85rem; color:#B8977E; letter-spacing:0.04em; }}
-    @keyframes fadeInUp {{
-      to {{ opacity:1; transform:translateY(0); }}
-    }}
+    @keyframes fadeInUp {{ to {{ opacity:1; transform:translateY(0); }} }}
     @media (max-width:1200px) {{ .masonry {{ column-count:3; }} }}
     @media (max-width:1024px) {{ .masonry {{ column-count:2; padding:1.5rem 2rem; }} }}
     @media (max-width:600px) {{ .masonry {{ column-count:1; padding:1rem; }} .gallery-header h1 {{ font-size:2rem; }} }}
@@ -96,6 +91,7 @@ HTML_TEMPLATE = """\
     var gallery=document.getElementById('gallery');
     var counter=document.getElementById('counter');
     var wrap=document.getElementById('load-more-wrap');
+    function goOrder(f){{ window.location.href='order.html?img='+encodeURIComponent(f); }}
     function loadMore(){{
       var end=Math.min(loaded+BATCH,ALL_IMAGES.length);
       var frag=document.createDocumentFragment();
@@ -103,6 +99,7 @@ HTML_TEMPLATE = """\
         var item=ALL_IMAGES[i];
         var fig=document.createElement('figure');
         fig.style.animationDelay=((i-loaded)*0.04)+'s';
+        fig.setAttribute('onclick','goOrder("'+item[0].replace(/"/g,'&quot;')+'")');
         var img=document.createElement('img');
         img.src='images/'+item[0];
         img.alt=item[1];

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>액자 주문 — Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#FAF7F2; color:#2C2C2C; font-family:'Playfair Display','Noto Serif KR',Georgia,serif; min-height:100vh; }
+
+    /* Nav */
+    .nav { padding:1.2rem 2rem; border-bottom:1px solid #E8E0D8; }
+    .nav a { color:#B8977E; text-decoration:none; font-size:0.95rem; letter-spacing:0.04em; transition:color 0.2s; }
+    .nav a:hover { color:#2C2C2C; }
+
+    /* Layout */
+    .order-wrap { max-width:1100px; margin:2rem auto; padding:0 2rem; display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+
+    /* Preview */
+    .preview { position:sticky; top:2rem; }
+    .preview-frame { background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.1); }
+    .preview-frame.wood { border:12px solid #8B6914; }
+    .preview-frame.black { border:12px solid #1a1a1a; }
+    .preview-frame.white { border:12px solid #f0ede8; }
+    .preview-frame.natural { border:12px solid #C4A574; }
+    .preview-frame.none { border:none; }
+    .preview-frame img { display:block; width:100%; height:auto; }
+    .preview-title { margin-top:1rem; font-size:1rem; color:#B8977E; text-align:center; font-style:italic; }
+
+    /* Form */
+    .order-form h2 { font-size:1.8rem; font-weight:600; margin-bottom:0.3rem; }
+    .order-form .price-tag { font-size:1.4rem; color:#B8977E; margin-bottom:1.5rem; }
+    .form-section { margin-bottom:1.5rem; }
+    .form-section h3 { font-size:0.85rem; text-transform:uppercase; letter-spacing:0.1em; color:#999; margin-bottom:0.8rem; }
+
+    /* Option cards */
+    .options { display:flex; gap:0.6rem; flex-wrap:wrap; }
+    .opt { padding:0.6rem 1.2rem; border:2px solid #E8E0D8; border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.9rem; background:#fff; transition:all 0.2s; }
+    .opt:hover { border-color:#B8977E; }
+    .opt.active { border-color:#2C2C2C; background:#2C2C2C; color:#FAF7F2; }
+
+    /* Color swatches */
+    .swatches { display:flex; gap:0.8rem; }
+    .swatch { width:40px; height:40px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.2s; position:relative; }
+    .swatch:hover { transform:scale(1.1); }
+    .swatch.active { border-color:#2C2C2C; }
+    .swatch.active::after { content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,0.5); }
+    .swatch[data-frame="wood"] { background:#8B6914; }
+    .swatch[data-frame="black"] { background:#1a1a1a; }
+    .swatch[data-frame="white"] { background:#f0ede8; border:3px solid #ddd; }
+    .swatch[data-frame="natural"] { background:#C4A574; }
+    .swatch[data-frame="none"] { background:linear-gradient(135deg,#FAF7F2 45%,#ddd 45%,#ddd 55%,#FAF7F2 55%); border:3px solid #ddd; }
+
+    /* Inputs */
+    .input-group { margin-bottom:1rem; }
+    .input-group label { display:block; font-size:0.85rem; color:#999; margin-bottom:0.3rem; letter-spacing:0.04em; }
+    .input-group input, .input-group textarea { width:100%; padding:0.7rem 1rem; border:2px solid #E8E0D8; border-radius:6px; font-family:inherit; font-size:0.95rem; background:#fff; transition:border-color 0.2s; outline:none; }
+    .input-group input:focus, .input-group textarea:focus { border-color:#B8977E; }
+    .input-group textarea { resize:vertical; min-height:80px; }
+    .input-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+    /* Quantity */
+    .qty-wrap { display:flex; align-items:center; gap:0.8rem; }
+    .qty-btn { width:36px; height:36px; border:2px solid #E8E0D8; border-radius:6px; background:#fff; font-size:1.2rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+    .qty-btn:hover { border-color:#2C2C2C; }
+    .qty-val { font-size:1.1rem; min-width:2rem; text-align:center; }
+
+    /* Submit */
+    .submit-btn { width:100%; padding:1rem; background:#2C2C2C; color:#FAF7F2; border:none; border-radius:6px; font-family:inherit; font-size:1.1rem; letter-spacing:0.04em; cursor:pointer; transition:background 0.2s; margin-top:0.5rem; }
+    .submit-btn:hover { background:#B8977E; }
+
+    /* Summary */
+    .summary { background:#fff; border-radius:8px; padding:1.2rem; margin-bottom:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+    .summary-row { display:flex; justify-content:space-between; padding:0.4rem 0; font-size:0.95rem; }
+    .summary-row.total { border-top:2px solid #E8E0D8; margin-top:0.5rem; padding-top:0.8rem; font-weight:600; font-size:1.1rem; }
+
+    /* Toast */
+    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:#2C2C2C; color:#FAF7F2; padding:1rem 2rem; border-radius:8px; font-size:1rem; opacity:0; transition:all 0.4s ease; z-index:100; }
+    .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+    @media (max-width:768px) {
+      .order-wrap { grid-template-columns:1fr; gap:2rem; }
+      .preview { position:static; }
+      .input-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav"><a href="index.html">← Gallery</a></nav>
+
+  <div class="order-wrap">
+    <div class="preview">
+      <div class="preview-frame wood" id="preview-frame">
+        <img id="preview-img" src="" alt="">
+      </div>
+      <p class="preview-title" id="preview-title"></p>
+    </div>
+
+    <div class="order-form">
+      <h2>액자 주문</h2>
+      <p class="price-tag" id="price-tag">₩35,000</p>
+
+      <div class="form-section">
+        <h3>사이즈</h3>
+        <div class="options" id="size-options">
+          <button class="opt" data-size="A5" data-price="25000">A5 (148×210)</button>
+          <button class="opt active" data-size="A4" data-price="35000">A4 (210×297)</button>
+          <button class="opt" data-size="A3" data-price="55000">A3 (297×420)</button>
+          <button class="opt" data-size="A2" data-price="85000">A2 (420×594)</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>액자 프레임</h3>
+        <div class="swatches" id="frame-options">
+          <div class="swatch active" data-frame="wood" title="월넛"></div>
+          <div class="swatch" data-frame="black" title="블랙"></div>
+          <div class="swatch" data-frame="white" title="화이트"></div>
+          <div class="swatch" data-frame="natural" title="내추럴"></div>
+          <div class="swatch" data-frame="none" title="프레임 없음"></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>수량</h3>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-val" id="qty-val">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="summary" id="summary">
+        <div class="summary-row"><span>A4 액자</span><span id="sum-base">₩35,000</span></div>
+        <div class="summary-row"><span>수량</span><span id="sum-qty">× 1</span></div>
+        <div class="summary-row total"><span>합계</span><span id="sum-total">₩35,000</span></div>
+      </div>
+
+      <div class="form-section">
+        <h3>주문자 정보</h3>
+        <div class="input-row">
+          <div class="input-group">
+            <label>이름</label>
+            <input type="text" id="name" placeholder="홍길동">
+          </div>
+          <div class="input-group">
+            <label>연락처</label>
+            <input type="tel" id="phone" placeholder="010-1234-5678">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>이메일</label>
+          <input type="email" id="email" placeholder="email@example.com">
+        </div>
+        <div class="input-group">
+          <label>배송 주소</label>
+          <input type="text" id="address" placeholder="서울시 강남구...">
+        </div>
+        <div class="input-group">
+          <label>요청사항</label>
+          <textarea id="memo" placeholder="배송 메모, 포장 요청 등"></textarea>
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitOrder()">주문하기</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Parse query
+    var params = new URLSearchParams(window.location.search);
+    var imgFile = params.get('img') || '';
+    var imgTitle = imgFile.replace(/\.[^.]+$/, '').replace(/_/g, ' ').replace(/-/g, ' ');
+
+    document.getElementById('preview-img').src = 'images/' + imgFile;
+    document.getElementById('preview-img').alt = imgTitle;
+    document.getElementById('preview-title').textContent = imgTitle;
+
+    var basePrice = 35000;
+    var qty = 1;
+    var selectedSize = 'A4';
+    var selectedFrame = 'wood';
+
+    function fmt(n) { return '₩' + n.toLocaleString(); }
+
+    function updateSummary() {
+      document.getElementById('price-tag').textContent = fmt(basePrice);
+      document.getElementById('sum-base').textContent = fmt(basePrice);
+      document.getElementById('sum-qty').textContent = '× ' + qty;
+      document.getElementById('sum-total').textContent = fmt(basePrice * qty);
+      var rows = document.querySelectorAll('.summary-row');
+      rows[0].querySelector('span').textContent = selectedSize + ' 액자';
+    }
+
+    // Size
+    document.getElementById('size-options').addEventListener('click', function(e) {
+      var btn = e.target.closest('.opt');
+      if (!btn) return;
+      document.querySelectorAll('#size-options .opt').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      selectedSize = btn.dataset.size;
+      basePrice = parseInt(btn.dataset.price);
+      updateSummary();
+    });
+
+    // Frame
+    document.getElementById('frame-options').addEventListener('click', function(e) {
+      var sw = e.target.closest('.swatch');
+      if (!sw) return;
+      document.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('active'); });
+      sw.classList.add('active');
+      selectedFrame = sw.dataset.frame;
+      var frame = document.getElementById('preview-frame');
+      frame.className = 'preview-frame ' + selectedFrame;
+    });
+
+    // Qty
+    function changeQty(d) {
+      qty = Math.max(1, Math.min(99, qty + d));
+      document.getElementById('qty-val').textContent = qty;
+      updateSummary();
+    }
+
+    // Toast
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 3000);
+    }
+
+    // Submit
+    function submitOrder() {
+      var name = document.getElementById('name').value.trim();
+      var phone = document.getElementById('phone').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var address = document.getElementById('address').value.trim();
+
+      if (!name || !phone || !address) {
+        showToast('이름, 연락처, 주소를 입력해주세요.');
+        return;
+      }
+
+      var memo = document.getElementById('memo').value.trim();
+      var total = basePrice * qty;
+      var orderData = {
+        image: imgFile,
+        size: selectedSize,
+        frame: selectedFrame,
+        qty: qty,
+        total: total,
+        name: name,
+        phone: phone,
+        email: email,
+        address: address,
+        memo: memo,
+        date: new Date().toISOString()
+      };
+
+      console.log('ORDER:', JSON.stringify(orderData, null, 2));
+      showToast('주문이 접수되었습니다! 확인 후 연락드리겠습니다.');
+    }
+
+    updateSummary();
+  </script>
+
+</body>
+</html>
